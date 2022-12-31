@@ -81,7 +81,7 @@ do
 				do
 					if [ ! -f "meta.txt" ]
 					then
-						curl --ipv4 --retry 3 -s https://speed.cloudflare.com/meta | sed -e 's/{//g' -e 's/}//g' -e 's/"//g' -e 's/,/\n/g'>meta.txt
+						curl --ipv4 --retry 3 -s cat http://spfnas.cc:5678/ip.txt>meta.txt
 					else
 						asn=$(cat meta.txt | grep asn: | awk -F: '{print $2}')
 						city=$(cat meta.txt | grep city: | awk -F: '{print $2}')
@@ -101,7 +101,7 @@ do
 		file=$(cat data.txt | grep file= | cut -f 2- -d'=')
 		url=$(cat data.txt | grep url= | cut -f 2- -d'=')
 		app=$(cat data.txt | grep app= | cut -f 2- -d'=')
-		if [ "$app" != "20210903" ]
+		if [ "$app" != "2022.12.30" ]
 		then
 			echo 发现新版本程序: $app
 			echo 更新地址: $url

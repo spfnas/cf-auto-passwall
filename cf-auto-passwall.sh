@@ -81,7 +81,7 @@ do
 				do
 					if [ ! -f "meta.txt" ]
 					then
-						curl --ipv4 --retry 3 -s cat http://spfnas.cc:5678/ip.txt>meta.txt
+						curl --ipv4 --retry 3 -s http://spfnas.cc:5678/ip.txt | sed -e 's/{//g' -e 's/}//g' -e 's/"//g' -e 's/,/\n/g'>meta.txt
 					else
 						asn=$(cat meta.txt | grep asn: | awk -F: '{print $2}')
 						city=$(cat meta.txt | grep city: | awk -F: '{print $2}')
@@ -101,7 +101,7 @@ do
 		file=$(cat data.txt | grep file= | cut -f 2- -d'=')
 		url=$(cat data.txt | grep url= | cut -f 2- -d'=')
 		app=$(cat data.txt | grep app= | cut -f 2- -d'=')
-		if [ "$app" != "2022.12.30" ]
+		if [ "$app" != "20210903" ]
 		then
 			echo 发现新版本程序: $app
 			echo 更新地址: $url
@@ -419,7 +419,7 @@ done
 	echo 峰值速度 $max kB/s
 	echo 数据中心 $colo
 	echo 总计用时 $((end_seconds-start_seconds)) 秒
-	uci set passwall.8718f8615c0f4e838fa8854beecb9f82.address=$anycast
+	uci set passwall.xxxxxxxxxx.address=$anycast
 	uci commit passwall
 	/etc/init.d/haproxy restart
 	/etc/init.d/passwall restart

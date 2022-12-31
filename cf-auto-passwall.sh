@@ -53,7 +53,7 @@ do
 				do
 					if [ ! -f "meta.txt" ]
 					then
-						curl --ipv4 --retry 3 -s http://spfnas.cc:5678/ip.txt>meta.txt
+						curl --ipv4 --retry 3 -s http://spfnas.cc:5678/ip.txt | sed -e 's/{//g' -e 's/}//g' -e 's/"//g' -e 's/,/\n/g'>meta.txt
 						else
 						asn=$(cat meta.txt | grep asn: | awk -F: '{print $2}')
 						city=$(cat meta.txt | grep city: | awk -F: '{print $2}')
@@ -69,7 +69,7 @@ do
 				do
 					if [ ! -f "meta.txt" ]
 					then
-						curl --ipv4 --retry 3 -s http://spfnas.cc:5678/ip.txt>meta.txt
+						curl --ipv4 --retry 3 -s http://spfnas.cc:5678/ip.txt | sed -e 's/{//g' -e 's/}//g' -e 's/"//g' -e 's/,/\n/g'>meta.txt
 					else
 						asn=$(cat meta.txt | grep asn: | awk -F: '{print $2}')
 						city=$(cat meta.txt | grep city: | awk -F: '{print $2}')

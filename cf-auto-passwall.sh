@@ -1,3 +1,15 @@
+#!/bin/bash
+
+# 使用说明：加在 openwrt 上系统 计划任务里 添加定时运行，如 0 4 * * 2,4,6 bash /root/cf-auto-passwall.sh > /dev/null
+# 0 4 * * 2,4,6 的意思是在每周二、周四、周六的凌晨4点会自动运行一次。/root/cf-auto-passwall.sh 是你脚本的绝对地址
+
+#########################################注意注意注意注意注意############################################
+
+# 1、请在脚本中修改你期望优选 IP 的带宽大小（默认5M）
+
+# 2、请更改 422 行 的 xxxxxxxxxx 字符串，为你自己 PassWall 的节点值（不会请看视频教程或是博客）
+
+######################################################################################################
 blue(){
     echo -e "\033[34m\033[01m$1\033[0m"
 }
@@ -29,81 +41,8 @@ declare -i speed
 
 
 # 下面为期望优选带宽的大小 默认 5M
-bandwidth=5
 
-
-speed=bandwidth*128*1024
-starttime=`date +'%Y-%m-%d %H:%M:%S'`
-while true
-do
-	while true
-	do
-		declare -i m
-		declare -i n
-		declare -i per
-		rm -rf icmp temp data.txt meta.txt log.txt anycast.txt temp.txt speed.txt
-		mkdir icmp
-		while true
-		do
-			if [ -f "resolve.txt" ]
-			then
-				echo 指向解析获取CF节点IP
-				resolveip=$(cat resolve.txt)
-				while true
-				do
-					if [ ! -f "meta.txt" ]
-					then
-						curl --ipv4 --retry 3 -s http://spfnas.cc:5678/ip.txt | sed -e 's/{//g' -e 's/}//g' -e 's/"//g' -e 's/,/\n/g'>meta.txt
-						else
-						asn=$(cat meta.txt | grep asn: | awk -F: '{print $2}')
-						city=$(cat meta.txt | grep city: | awk -F: '{print $2}')
-						latitude=$(cat meta.txt | grep latitude: | awk -F: '{print $2}')
-						longitude=$(cat meta.txt | grep longitude: | awk -F: '{print $2}')
-						curl --ipv4 --resolve service.udpfile.com:443:$resolveip --retry 3 "https://service.udpfile.com?asn="$asn"&city="$city"" -o data.txt -#
-						break
-					fi
-				done
-			else
-				echo DNS解析获取CF节点IP
-				while true
-				do
-					if [ ! -f "meta.txt" ]
-					then
-						curl --ipv4 --retry 3 -s http://spfnas.cc:5678/ip.txt | sed -e 's/{//g' -e 's/}//g' -e 's/"//g' -e 's/,/\n/g'>meta.txt
-					else
-						asn=$(cat meta.txt | grep asn: | awk -F: '{print $2}')
-						city=$(cat meta.txt | grep city: | awk -F: '{print $2}')
-						latitude=$(cat meta.txt | grep latitude: | awk -F: '{print $2}')
-						longitude=$(cat meta.txt | grep longitude: | awk -F: '{print $2}')
-						curl --ipv4 --retry 3 "https://service.udpfile.com?asn="$asn"&city="$city"" -o data.txt -#
-						break
-					fi
-				done
-			fi
-			if [ -f "data.txt" ]
-			then
-				break
-			fi
-		done
-		domain=$(cat data.txt | grep domain= | cut -f 2- -d'=')
-		file=$(cat data.txt | grep file= | cut -f 2- -d'=')
-		url=$(cat data.txt | grep url= | cut -f 2- -d'=')
-		app=$(cat data.txt | grep app= | cut -f 2- -d'=')
-		if [ "$app" != "20210903" ]
-		then
-			echo 发现新版本程序: $app
-			echo 更新地址: $url
-			echo 更新后才可以使用
-			exit
-		fi
-		for i in `cat data.txt | sed '1,4d'`
-		do
-			echo $i>>anycast.txt
-		done
-		rm -rf meta.txt data.txt
-		n=0
-		m=$(cat anycast.txt | wc -l)
-		for i in `cat anycast.txt`
+		for i in `cat /tmp/upload/ip.txt`
 		do
 			ping -c 20 -i 1 -n -q $i > icmp/$n.log&
 			n=$[$n+1]

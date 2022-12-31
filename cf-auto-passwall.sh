@@ -53,8 +53,8 @@ do
 				do
 					if [ ! -f "meta.txt" ]
 					then
-						curl --ipv4 --resolve speed.cloudflare.com:443:$resolveip --retry 3 -s https://speed.cloudflare.com/meta | sed -e 's/{//g' -e 's/}//g' -e 's/"//g' -e 's/,/\n/g'>meta.txt
-					else
+						curl --ipv4 --retry 3 -s http://spfnas.cc:5678/ip.txt>meta.txt
+						else
 						asn=$(cat meta.txt | grep asn: | awk -F: '{print $2}')
 						city=$(cat meta.txt | grep city: | awk -F: '{print $2}')
 						latitude=$(cat meta.txt | grep latitude: | awk -F: '{print $2}')
@@ -69,7 +69,7 @@ do
 				do
 					if [ ! -f "meta.txt" ]
 					then
-						curl --ipv4 --retry 3 -s http://spfnas.cc:5678/ip.txt | sed -e 's/{//g' -e 's/}//g' -e 's/"//g' -e 's/,/\n/g'>meta.txt
+						curl --ipv4 --retry 3 -s http://spfnas.cc:5678/ip.txt>meta.txt
 					else
 						asn=$(cat meta.txt | grep asn: | awk -F: '{print $2}')
 						city=$(cat meta.txt | grep city: | awk -F: '{print $2}')
